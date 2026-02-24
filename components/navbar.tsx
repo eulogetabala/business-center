@@ -19,12 +19,50 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
+    setMounted(true)
+    setIsDesktop(window.innerWidth >= 768)
+    
+    // Force re-render to prevent cache issues
     const onScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
+    
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768)
+    }
+    window.addEventListener("resize", handleResize)
+    
+    // Force navbar visibility as fallback
+    const forceNavbarVisibility = () => {
+      const nav = document.querySelector('nav[data-navbar="true"]')
+      if (nav) {
+        const navElement = nav as HTMLElement
+        navElement.style.display = 'block'
+        navElement.style.visibility = 'visible'
+        navElement.style.opacity = '1'
+        navElement.style.position = 'fixed'
+        navElement.style.top = '0'
+        navElement.style.left = '0'
+        navElement.style.right = '0'
+        navElement.style.zIndex = '50'
+        navElement.style.width = '100%'
+      }
+    }
+    
+    // Force visibility immediately and after delays
+    forceNavbarVisibility()
+    setTimeout(forceNavbarVisibility, 100)
+    setTimeout(forceNavbarVisibility, 500)
+    setTimeout(forceNavbarVisibility, 1000)
+    
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", handleResize)
+    }
   }, [])
 
   useEffect(() => {
@@ -65,7 +103,9 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 flex-1 justify-center mx-8">
+        <nav 
+          className={`${isDesktop ? 'flex' : 'hidden'} items-center gap-1 flex-1 justify-center mx-8`}
+        >
           {navLinks.map((link) => {
             const isActive = pathname === link.href
             return (
@@ -90,7 +130,9 @@ export function Navbar() {
         </nav>
 
         {/* Right side: socials + contact */}
-        <div className="hidden md:flex items-center gap-2 shrink-0">
+        <div 
+          className={`${isDesktop ? 'flex' : 'hidden'} items-center gap-2 shrink-0`}
+        >
           <a
             href="https://www.instagram.com/businesscenter_tj/"
             target="_blank"

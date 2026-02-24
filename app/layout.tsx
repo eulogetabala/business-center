@@ -49,9 +49,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
+      <head>
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+      </head>
       <body className={`${playfair.variable} ${inter.variable} font-sans antialiased`}>
         {children}
         <Analytics />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Force reload if navbar is missing (cache issue fix)
+              (function() {
+                setTimeout(function() {
+                  const nav = document.querySelector('nav[data-navbar="true"]');
+                  if (!nav) {
+                    console.warn('Navbar not found, forcing reload...');
+                    window.location.reload(true);
+                  }
+                }, 500);
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   )
