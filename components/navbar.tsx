@@ -38,6 +38,8 @@ export function Navbar() {
           ? "bg-navy/95 backdrop-blur-md shadow-lg shadow-navy-dark/20 py-2"
           : "bg-navy/70 backdrop-blur-sm py-4"
       }`}
+      data-navbar="true"
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 w-full">
         {/* Logo */}
