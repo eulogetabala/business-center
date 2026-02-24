@@ -12,6 +12,7 @@ const navLinks = [
   { label: "Notre environnement", href: "/notre-environnement" },
   { label: "Nos evenements", href: "/nos-evenements" },
   { label: "Restaurant le detour", href: "/restaurant" },
+  { label: "Blog", href: "/blog" },
   { label: "Infos pratiques", href: "/infos-pratiques" },
 ]
 
