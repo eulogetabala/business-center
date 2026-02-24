@@ -50,9 +50,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
-        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
+        <meta name="cache-control" content="no-cache" />
+        <meta name="expires" content="0" />
       </head>
       <body className={`${playfair.variable} ${inter.variable} font-sans antialiased`}>
         {children}
@@ -62,13 +64,29 @@ export default function RootLayout({
             __html: `
               // Force reload if navbar is missing (cache issue fix)
               (function() {
-                setTimeout(function() {
+                // Check navbar immediately
+                const checkNavbar = function() {
                   const nav = document.querySelector('nav[data-navbar="true"]');
                   if (!nav) {
-                    console.warn('Navbar not found, forcing reload...');
-                    window.location.reload(true);
+                    console.warn('Navbar not found, forcing hard reload...');
+                    // Force hard reload to bypass cache
+                    window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+                    return true;
                   }
+                  return false;
+                };
+                
+                // Check multiple times
+                if (checkNavbar()) return;
+                setTimeout(function() {
+                  if (checkNavbar()) return;
+                }, 200);
+                setTimeout(function() {
+                  if (checkNavbar()) return;
                 }, 500);
+                setTimeout(function() {
+                  if (checkNavbar()) return;
+                }, 1000);
               })();
             `,
           }}
